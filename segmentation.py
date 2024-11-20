@@ -1,10 +1,36 @@
 import streamlit as st
-import cv2
 import numpy as np
-from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+import sys
+import subprocess
+
+def install_packages():
+    packages = [
+        "opencv-python-headless",
+        "scikit-learn",
+        "numpy",
+        "matplotlib"
+    ]
+    for package in packages:
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        except subprocess.CalledProcessError:
+            st.error(f"Failed to install {package}")
+            return False
+    return True
+
+try:
+    import cv2
+    from sklearn.cluster import KMeans
+except ImportError:
+    if install_packages():
+        import cv2
+        from sklearn.cluster import KMeans
+    else:
+        st.error("Failed to import required packages. Please contact support.")
+        st.stop()
 
 # Set page configuration
 st.set_page_config(
